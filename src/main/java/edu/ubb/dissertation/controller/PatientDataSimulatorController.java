@@ -21,8 +21,8 @@ public class PatientDataSimulatorController {
     @PostMapping("/generateMeasurements")
     public ResponseEntity<String> generatePatientMeasurements(@RequestBody GenerateDataRequest request) {
         try {
-            LOGGER.info(String.format("Generating %d measurements", request.getMeasurementsNumber()));
             patientMeasurementSimulatorService.generateData(request.getMeasurementsNumber());
+            LOGGER.info(String.format("Generated %d measurements.", request.getMeasurementsNumber()));
             return ResponseEntity.ok(String.format("%d patient measurements generated.", request.getMeasurementsNumber()));
         } catch (Exception e) {
             LOGGER.error(String.format("Could not generate patient measurements. Exception: %s.", e.getMessage()));
