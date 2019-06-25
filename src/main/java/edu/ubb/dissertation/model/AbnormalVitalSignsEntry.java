@@ -26,7 +26,7 @@ public class AbnormalVitalSignsEntry {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -34,7 +34,7 @@ public class AbnormalVitalSignsEntry {
         return patientMeasurement;
     }
 
-    public void setPatientMeasurement(PatientMeasurement patientMeasurement) {
+    public void setPatientMeasurement(final PatientMeasurement patientMeasurement) {
         this.patientMeasurement = patientMeasurement;
     }
 

@@ -25,7 +25,7 @@ public class PatientData {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -33,7 +33,7 @@ public class PatientData {
         return measurements;
     }
 
-    public void setMeasurements(List<PatientMeasurement> measurements) {
+    public void setMeasurements(final List<PatientMeasurement> measurements) {
         this.measurements = measurements;
     }
 }

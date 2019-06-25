@@ -1,4 +1,4 @@
-package edu.ubb.dissertation.util;
+package edu.ubb.dissertation.converter;
 
 import edu.ubb.dissertation.model.AbnormalVitalSignType;
 
@@ -19,7 +19,6 @@ public class AbnormalVitalSignTypeConverter implements AttributeConverter<Abnorm
 
     @Override
     public AbnormalVitalSignType convertToEntityAttribute(final String s) {
-        // TODO throw exception or return null ?
         return Optional.ofNullable(s)
                 .map(code -> Stream.of(AbnormalVitalSignType.values())
                         .filter(c -> c.getCode().equals(code))
@@ -27,5 +26,4 @@ public class AbnormalVitalSignTypeConverter implements AttributeConverter<Abnorm
                         .orElseThrow(IllegalArgumentException::new))
                 .orElseThrow(IllegalArgumentException::new);
     }
-
 }

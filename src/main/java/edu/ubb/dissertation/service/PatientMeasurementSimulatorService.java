@@ -1,12 +1,12 @@
 package edu.ubb.dissertation.service;
 
 import edu.ubb.dissertation.model.*;
+import edu.ubb.dissertation.mqtt.MqttClientConnector;
 import edu.ubb.dissertation.repository.AbnormalVitalSignRepository;
 import edu.ubb.dissertation.repository.PatientDataRepository;
 import edu.ubb.dissertation.repository.PatientMeasurementRepository;
+import io.vavr.control.Try;
 import org.apache.commons.math3.util.Precision;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,22 +19,24 @@ import java.util.stream.IntStream;
 
 import static edu.ubb.dissertation.model.AbnormalVitalSignType.*;
 import static edu.ubb.dissertation.util.Constants.*;
+import static edu.ubb.dissertation.util.MqttMessageCreator.createMqttMessage;
 
 @Service
 public class PatientMeasurementSimulatorService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PatientMeasurementSimulatorService.class);
 
     private static final double ERROR_RANGE = 5.0;
 
     @Autowired
     private PatientMeasurementRepository patientMeasurementRepository;
-
     @Autowired
     private AbnormalVitalSignRepository abnormalVitalSignRepository;
-
     @Autowired
     private PatientDataRepository patientDataRepository;
+    private MqttClientConnector mqttClientConnector;
+
+    public PatientMeasurementSimulatorService() {
+        mqttClientConnector = new MqttClientConnector();
+    }
 
     public void generateData(final Integer measurementsNumber) {
         Optional.ofNullable(measurementsNumber)
@@ -44,23 +46,38 @@ public class PatientMeasurementSimulatorService {
     private void generateMeasurements(final Integer measurementsNumber) {
         final PatientData patientData = retrieveOrCreatePatient();
 
+        mqttClientConnector.connect();
         IntStream.range(0, measurementsNumber)
-                .mapToObj(i -> patientMeasurementRepository.save(createPatientMeasurement(patientData)))
-                .peek(measurement -> {
-                    try {
-                        // needed in order to generate the data only at a certain time interval (half a minute)
-                        Thread.sleep(30000);
-                    } catch (InterruptedException e) {
-                        LOGGER.error(String.format("Exception occurred when calling sleep: %s", e.getMessage()));
-                    }
-                })
-                .forEach(patientMeasurement -> abnormalVitalSignRepository.save(createAbnormalVitalSignsEntry(patientMeasurement)));
+                .forEach(i -> generateEntry(patientData));
+        mqttClientConnector.disconnect();
+    }
+
+    private PatientData retrieveOrCreatePatient() {
+        return patientDataRepository.count() == 0
+                ? patientDataRepository.save(new PatientData())
+                : patientDataRepository.findAll().iterator().next();
+    }
+
+    private void generateEntry(final PatientData patientData) {
+        final PatientMeasurement measurement = patientMeasurementRepository.save(createPatientMeasurement(patientData));
+        final AbnormalVitalSignsEntry entry = abnormalVitalSignRepository.save(createAbnormalVitalSignsEntry(measurement));
+        mqttClientConnector.publish(createMqttMessage(measurement, entry));
     }
 
     private PatientMeasurement createPatientMeasurement(final PatientData patientData) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        while (timestamp.getSecond() != 0 && timestamp.getSecond() != 30) {
+            timestamp = LocalDateTime.now();
+        }
+        // added in order to avoid having data generated with the same timestamp
+        Try.run(() -> Thread.sleep(1000));
+        return createPatientMeasurement(patientData, timestamp);
+    }
+
+    private PatientMeasurement createPatientMeasurement(final PatientData patientData, final LocalDateTime timestamp) {
         final PatientMeasurement patientMeasurement = new PatientMeasurement();
         patientMeasurement.setPatientData(patientData);
-        patientMeasurement.setTimestamp(LocalDateTime.now());
+        patientMeasurement.setTimestamp(timestamp);
         patientMeasurement.setSystolicBloodPressure(
                 createMeasurement(SYSTOLIC_BLOOD_PRESSURE_UPPER_LIMIT, SYSTOLIC_BLOOD_PRESSURE_LOWER_LIMIT));
         patientMeasurement.setDiastolicBloodPressure(
@@ -72,12 +89,6 @@ public class PatientMeasurementSimulatorService {
         patientMeasurement.setBloodLossRate(
                 generateRandomValue(BLOOD_LOSS_LEVEL_LOWER_LIMIT, BLOOD_LOSS_LEVEL_UPPER_LIMIT));
         return patientMeasurement;
-    }
-
-    private PatientData retrieveOrCreatePatient() {
-        return patientDataRepository.count() == 0
-                ? patientDataRepository.save(new PatientData())
-                : patientDataRepository.findAll().iterator().next();
     }
 
     private Measurement createMeasurement(final double upperLimit, final double lowerLimit) {
@@ -127,5 +138,4 @@ public class PatientMeasurementSimulatorService {
     private Double roundValue(final double value) {
         return Precision.round(value, 2);
     }
-
 }

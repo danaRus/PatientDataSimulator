@@ -15,6 +15,10 @@
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <mysql-connector-java.version>5.1.6</mysql-connector-java.version>
         <apache.commons.version>3.6.1</apache.commons.version>
+        <io.vavr.version>0.9.2</io.vavr.version>
+        <org.eclipse.paho.mqtt.version>1.2.1</org.eclipse.paho.mqtt.version>
+        <net.jodah.failsafe.version>2.0.1</net.jodah.failsafe.version>
+        <org.json.version>20180813</org.json.version>
     </properties>
 
     <parent>
@@ -46,7 +50,7 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql-connector-java.version}</version>
-            <!-- old version of the connector needed in order to be compatible with the MySQL version from cloudera-->
+            <!-- old version of the connector needed in order to be compatible with the MySQL version from Cloudera -->
         </dependency>
 
         <dependency>
@@ -66,9 +70,30 @@
         </dependency>
 
         <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>${org.eclipse.paho.mqtt.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>${apache.commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>${io.vavr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>failsafe</artifactId>
+            <version>${net.jodah.failsafe.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${org.json.version}</version>
         </dependency>
     </dependencies>
 

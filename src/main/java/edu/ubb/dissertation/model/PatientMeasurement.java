@@ -65,7 +65,7 @@ public class PatientMeasurement {
         return patientData;
     }
 
-    public void setPatientData(PatientData patientData) {
+    public void setPatientData(final PatientData patientData) {
         this.patientData = patientData;
     }
 
@@ -89,7 +89,7 @@ public class PatientMeasurement {
         return diastolicBloodPressure;
     }
 
-    public void setDiastolicBloodPressure(Measurement diastolicBloodPressure) {
+    public void setDiastolicBloodPressure(final Measurement diastolicBloodPressure) {
         this.diastolicBloodPressure = diastolicBloodPressure;
     }
 
@@ -116,5 +116,4 @@ public class PatientMeasurement {
     public void setBloodLossRate(final Double bloodLossRate) {
         this.bloodLossRate = bloodLossRate;
     }
-
 }

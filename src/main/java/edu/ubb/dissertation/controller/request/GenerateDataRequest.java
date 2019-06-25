@@ -8,8 +8,7 @@ public class GenerateDataRequest {
         return measurementsNumber;
     }
 
-    public void setMeasurementsNumber(Integer measurementsNumber) {
+    public void setMeasurementsNumber(final Integer measurementsNumber) {
         this.measurementsNumber = measurementsNumber;
     }
-
 }

@@ -13,12 +13,11 @@ public enum AbnormalVitalSignType {
 
     private String code;
 
-    AbnormalVitalSignType(String code) {
+    AbnormalVitalSignType(final String code) {
         this.code = code;
     }
 
     public String getCode() {
         return code;
     }
-
 }

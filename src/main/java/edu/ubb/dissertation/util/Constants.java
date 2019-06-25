@@ -1,6 +1,9 @@
 package edu.ubb.dissertation.util;
 
-public class Constants {
+public final class Constants {
+
+    private Constants() {
+    }
 
     public static final double SYSTOLIC_BLOOD_PRESSURE_UPPER_LIMIT = 120.0;
     public static final double SYSTOLIC_BLOOD_PRESSURE_LOWER_LIMIT = 90.0;

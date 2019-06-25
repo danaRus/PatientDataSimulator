@@ -2,6 +2,7 @@ package edu.ubb.dissertation.controller;
 
 import edu.ubb.dissertation.controller.request.GenerateDataRequest;
 import edu.ubb.dissertation.service.PatientMeasurementSimulatorService;
+import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +20,15 @@ public class PatientDataSimulatorController {
     private PatientMeasurementSimulatorService patientMeasurementSimulatorService;
 
     @PostMapping("/generateMeasurements")
-    public ResponseEntity<String> generatePatientMeasurements(@RequestBody GenerateDataRequest request) {
-        try {
-            patientMeasurementSimulatorService.generateData(request.getMeasurementsNumber());
-            LOGGER.info(String.format("Generated %d measurements.", request.getMeasurementsNumber()));
-            return ResponseEntity.ok(String.format("%d patient measurements generated.", request.getMeasurementsNumber()));
-        } catch (Exception e) {
-            LOGGER.error(String.format("Could not generate patient measurements. Exception: %s.", e.getMessage()));
-            return ResponseEntity.badRequest().body("An error occurred while generating patient measurements.");
-        }
+    public ResponseEntity<String> generatePatientMeasurements(final @RequestBody GenerateDataRequest request) {
+        return Try.of(() -> generateData(request.getMeasurementsNumber()))
+                .onFailure(e -> LOGGER.error("Could not generate patient measurements. Message: {}.", e.getMessage()))
+                .getOrElseGet(e -> ResponseEntity.badRequest().body("An error occurred while generating patient measurements."));
     }
 
+    private ResponseEntity<String> generateData(final Integer measurementsNumber) {
+        patientMeasurementSimulatorService.generateData(measurementsNumber);
+        LOGGER.info(String.format("Generated %d measurements.", measurementsNumber));
+        return ResponseEntity.ok(String.format("%d patient measurements generated.", measurementsNumber));
+    }
 }
