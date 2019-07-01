@@ -102,32 +102,32 @@ public class PatientMeasurementSimulatorService {
     private AbnormalVitalSignsEntry createAbnormalVitalSignsEntry(final PatientMeasurement patientMeasurement) {
         final AbnormalVitalSignsEntry abnormalVitalSignsEntry = new AbnormalVitalSignsEntry();
         abnormalVitalSignsEntry.setPatientMeasurement(patientMeasurement);
-        abnormalVitalSignsEntry.setAbnormalVitalSignTypes(extractAbnormalVitalSignTypes(patientMeasurement));
+        abnormalVitalSignsEntry.setAbnormalVitalSigns(extractAbnormalVitalSigns(patientMeasurement));
         return abnormalVitalSignsEntry;
     }
 
-    private Set<AbnormalVitalSignType> extractAbnormalVitalSignTypes(final PatientMeasurement patientMeasurement) {
-        final Set<AbnormalVitalSignType> abnormalVitalSignTypes = new HashSet<>();
+    private Set<AbnormalVitalSignType> extractAbnormalVitalSigns(final PatientMeasurement patientMeasurement) {
+        final Set<AbnormalVitalSignType> abnormalVitalSigns = new HashSet<>();
 
         addAbnormalVitalSignsForMeasurement(patientMeasurement.getSystolicBloodPressure(),
-                abnormalVitalSignTypes, SYSTOLIC_BLOOD_PRESSURE_BELOW_LOWER_LIMIT, SYSTOLIC_BLOOD_PRESSURE_ABOVE_UPPER_LIMIT);
+                abnormalVitalSigns, SYSTOLIC_BLOOD_PRESSURE_BELOW_LOWER_LIMIT, SYSTOLIC_BLOOD_PRESSURE_ABOVE_UPPER_LIMIT);
         addAbnormalVitalSignsForMeasurement(patientMeasurement.getSystolicBloodPressure(),
-                abnormalVitalSignTypes, DIASTOLIC_BLOOD_PRESSURE_BELOW_LOWER_LIMIT, DIASTOLIC_BLOOD_PRESSURE_ABOVE_UPPER_LIMIT);
+                abnormalVitalSigns, DIASTOLIC_BLOOD_PRESSURE_BELOW_LOWER_LIMIT, DIASTOLIC_BLOOD_PRESSURE_ABOVE_UPPER_LIMIT);
         addAbnormalVitalSignsForMeasurement(patientMeasurement.getHeartRate(),
-                abnormalVitalSignTypes, HEART_RATE_BELOW_LOWER_LIMIT, HEART_RATE_ABOVE_UPPER_LIMIT);
+                abnormalVitalSigns, HEART_RATE_BELOW_LOWER_LIMIT, HEART_RATE_ABOVE_UPPER_LIMIT);
         addAbnormalVitalSignsForMeasurement(patientMeasurement.getOxygenSaturationLevel(),
-                abnormalVitalSignTypes, OXYGEN_SATURATION_LEVEL_BELOW_LOWER_LIMIT, OXYGEN_SATURATION_LEVEL_ABOVE_UPPER_LIMIT);
+                abnormalVitalSigns, OXYGEN_SATURATION_LEVEL_BELOW_LOWER_LIMIT, OXYGEN_SATURATION_LEVEL_ABOVE_UPPER_LIMIT);
 
-        return abnormalVitalSignTypes;
+        return abnormalVitalSigns;
     }
 
-    private void addAbnormalVitalSignsForMeasurement(final Measurement measurement, final Set<AbnormalVitalSignType> abnormalVitalSignTypes,
+    private void addAbnormalVitalSignsForMeasurement(final Measurement measurement, final Set<AbnormalVitalSignType> abnormalVitalSigns,
                                                      final AbnormalVitalSignType below, final AbnormalVitalSignType above) {
         if (measurement.getValue() < measurement.getLowerLimit()) {
-            abnormalVitalSignTypes.add(below);
+            abnormalVitalSigns.add(below);
         }
         if (measurement.getValue() > measurement.getUpperLimit()) {
-            abnormalVitalSignTypes.add(above);
+            abnormalVitalSigns.add(above);
         }
     }
 

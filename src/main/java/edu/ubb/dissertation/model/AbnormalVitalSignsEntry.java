@@ -17,7 +17,7 @@ public class AbnormalVitalSignsEntry {
     private PatientMeasurement patientMeasurement;
 
     @ElementCollection
-    private Set<AbnormalVitalSignType> abnormalVitalSignTypes;
+    private Set<AbnormalVitalSignType> abnormalVitalSigns;
 
     public AbnormalVitalSignsEntry() {
     }
@@ -38,11 +38,11 @@ public class AbnormalVitalSignsEntry {
         this.patientMeasurement = patientMeasurement;
     }
 
-    public Set<AbnormalVitalSignType> getAbnormalVitalSignTypes() {
-        return abnormalVitalSignTypes;
+    public Set<AbnormalVitalSignType> getAbnormalVitalSigns() {
+        return abnormalVitalSigns;
     }
 
-    public void setAbnormalVitalSignTypes(final Set<AbnormalVitalSignType> abnormalVitalSignTypes) {
-        this.abnormalVitalSignTypes = abnormalVitalSignTypes;
+    public void setAbnormalVitalSigns(final Set<AbnormalVitalSignType> abnormalVitalSigns) {
+        this.abnormalVitalSigns = abnormalVitalSigns;
     }
 }
