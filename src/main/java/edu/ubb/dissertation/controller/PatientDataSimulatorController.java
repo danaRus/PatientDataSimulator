@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Contains all the endpoints that can be called for generating the patient data.
+ */
 @RestController
 public class PatientDataSimulatorController {
 
@@ -19,6 +22,12 @@ public class PatientDataSimulatorController {
     @Autowired
     private PatientMeasurementSimulatorService patientMeasurementSimulatorService;
 
+    /**
+     * Used in order to generate the number of patient measurements needed, as configured though
+     * {@param request.measurementsNumber}. If the data was successfully generated, a success response will be returned,
+     * containing the number of measurements generated (for confirmation). In case the measurements cannot be generated,
+     * a failure response will be returned.
+     */
     @PostMapping("/generateMeasurements")
     public ResponseEntity<String> generatePatientMeasurements(final @RequestBody GenerateDataRequest request) {
         return Try.of(() -> generateData(request.getMeasurementsNumber()))

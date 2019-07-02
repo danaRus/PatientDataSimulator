@@ -21,6 +21,9 @@ import static edu.ubb.dissertation.model.AbnormalVitalSignType.*;
 import static edu.ubb.dissertation.util.Constants.*;
 import static edu.ubb.dissertation.util.MqttMessageCreator.createMqttMessage;
 
+/**
+ * Encapsulates the logic for generating all the entities needed for (associated to) a patient measurement.
+ */
 @Service
 public class PatientMeasurementSimulatorService {
 
@@ -52,6 +55,10 @@ public class PatientMeasurementSimulatorService {
         mqttClientConnector.disconnect();
     }
 
+    /*
+     * Since the project was created in order to simulate data for a Proof-Of-Concept, the data is considered as
+     * belonging to a single patient. As such, before creating the measurement, it must be ensured that a patient exists.
+     */
     private PatientData retrieveOrCreatePatient() {
         return patientDataRepository.count() == 0
                 ? patientDataRepository.save(new PatientData())
@@ -64,6 +71,11 @@ public class PatientMeasurementSimulatorService {
         mqttClientConnector.publish(createMqttMessage(measurement, entry));
     }
 
+    /*
+     * For the Proof-Of-Concept application, the measurements must be generated each minute at 00 and 30 seconds. This
+     * is done in order to ensure the correlation with the other data used in the pipeline and as such make sure that
+     * the processing/analytics performed on the data is relevant.
+     */
     private PatientMeasurement createPatientMeasurement(final PatientData patientData) {
         LocalDateTime timestamp = LocalDateTime.now();
         while (timestamp.getSecond() != 0 && timestamp.getSecond() != 30) {

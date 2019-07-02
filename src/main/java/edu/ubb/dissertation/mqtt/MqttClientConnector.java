@@ -9,10 +9,14 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static edu.ubb.dissertation.util.Retrier.retry;
 
+/**
+ * Encapsulates the logic needed for connecting/disconnecting to MQTT and publishing to a topic.
+ */
 public class MqttClientConnector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MqttClientConnector.class);
@@ -39,9 +43,9 @@ public class MqttClientConnector {
     }
 
     public void disconnect() {
-        execute(() -> client.disconnect(),
-                v -> LOGGER.info("Successfully disconnected from MQTT server"),
-                e -> LOGGER.error("Failed to disconnect from MQTT topic. Message: {}", e.getMessage()));
+        Optional.ofNullable(client)
+                .filter(MqttClient::isConnected)
+                .ifPresent(v -> disconnectClient());
     }
 
     private MqttClient initializeMqttClient() {
@@ -50,12 +54,22 @@ public class MqttClientConnector {
                 .getOrElseThrow(ConnectionException::create);
     }
 
+    /*
+     * Create the options needed for connecting to MQTT. The options were chosen so that the connection is reliable
+     * (even when the application is restarted).
+     */
     private MqttConnectOptions createConnectionOptions() {
         final MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(true);
         options.setCleanSession(false);
         options.setKeepAliveInterval(120);
         return options;
+    }
+
+    private void disconnectClient() {
+        execute(() -> client.disconnect(),
+                v -> LOGGER.info("Successfully disconnected from MQTT server"),
+                e -> LOGGER.error("Failed to disconnect from MQTT topic. Message: {}", e.getMessage()));
     }
 
     private void execute(final CheckedRunnable runnable, final Consumer<? super Void> successAction,

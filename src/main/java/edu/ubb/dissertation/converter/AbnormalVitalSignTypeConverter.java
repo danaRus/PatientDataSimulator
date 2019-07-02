@@ -7,6 +7,11 @@ import javax.persistence.Converter;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Responsible for ensuring that {@link AbnormalVitalSignType} is correctly mapped, when
+ * - persisting to a database
+ * - reading the values from a database
+ */
 @Converter(autoApply = true)
 public class AbnormalVitalSignTypeConverter implements AttributeConverter<AbnormalVitalSignType, String> {
 
