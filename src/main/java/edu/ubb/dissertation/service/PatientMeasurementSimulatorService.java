@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 import static edu.ubb.dissertation.model.AbnormalVitalSignType.*;
 import static edu.ubb.dissertation.util.Constants.*;
 import static edu.ubb.dissertation.util.MqttMessageCreator.createMqttMessage;
+import static java.time.ZoneOffset.UTC;
 
 /**
  * Encapsulates the logic for generating all the entities needed for (associated to) a patient measurement.
@@ -79,7 +80,7 @@ public class PatientMeasurementSimulatorService {
     private PatientMeasurement createPatientMeasurement(final PatientData patientData) {
         LocalDateTime timestamp = LocalDateTime.now();
         while (timestamp.getSecond() != 0 && timestamp.getSecond() != 30) {
-            timestamp = LocalDateTime.now();
+            timestamp = LocalDateTime.now(UTC);
         }
         // added in order to avoid having data generated with the same timestamp
         Try.run(() -> Thread.sleep(1000));
