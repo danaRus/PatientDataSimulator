@@ -73,13 +73,13 @@ public class PatientMeasurementSimulatorService {
     }
 
     /*
-     * For the Proof-Of-Concept application, the measurements must be generated each minute at 00 and 30 seconds. This
+     * For the Proof-Of-Concept application, the measurements must be generated every 10 seconds. This
      * is done in order to ensure the correlation with the other data used in the pipeline and as such make sure that
      * the processing/analytics performed on the data is relevant.
      */
     private PatientMeasurement createPatientMeasurement(final PatientData patientData) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        while (timestamp.getSecond() != 0 && timestamp.getSecond() != 30) {
+        LocalDateTime timestamp = LocalDateTime.now(UTC);
+        while (timestamp.getSecond() % 10 != 0) {
             timestamp = LocalDateTime.now(UTC);
         }
         // added in order to avoid having data generated with the same timestamp
