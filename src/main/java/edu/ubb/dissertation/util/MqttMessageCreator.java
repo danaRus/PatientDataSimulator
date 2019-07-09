@@ -11,6 +11,12 @@ public final class MqttMessageCreator {
     }
 
     public static MqttMessage createMqttMessage(final PatientMeasurement measurement, final AbnormalVitalSignsEntry entry) {
+        final MqttMessage message = new MqttMessage(createJson(measurement, entry).toString().getBytes());
+        message.setQos(2);
+        return message;
+    }
+
+    private static JSONObject createJson(final PatientMeasurement measurement, final AbnormalVitalSignsEntry entry) {
         final JSONObject jsonObject = new JSONObject();
         jsonObject.accumulate("measurementId", measurement.getId());
         jsonObject.accumulate("timestamp", measurement.getTimestamp().toString());
@@ -30,6 +36,6 @@ public final class MqttMessageCreator {
         jsonObject.accumulate("abnormalVitalSigns", entry.getAbnormalVitalSigns());
         jsonObject.accumulate("patientId", measurement.getPatientData().getId());
         jsonObject.accumulate("surgeryId", measurement.getSurgery().getId());
-        return new MqttMessage(jsonObject.toString().getBytes());
+        return jsonObject;
     }
 }
