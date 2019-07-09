@@ -50,6 +50,10 @@ public class PatientMeasurement {
 
     private Double bloodLossRate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "surgery_id")
+    private Surgery surgery;
+
     public PatientMeasurement() {
     }
 
@@ -115,5 +119,13 @@ public class PatientMeasurement {
 
     public void setBloodLossRate(final Double bloodLossRate) {
         this.bloodLossRate = bloodLossRate;
+    }
+
+    public Surgery getSurgery() {
+        return surgery;
+    }
+
+    public void setSurgery(final Surgery surgery) {
+        this.surgery = surgery;
     }
 }

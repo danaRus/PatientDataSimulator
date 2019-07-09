@@ -28,6 +28,8 @@ public final class MqttMessageCreator {
         jsonObject.accumulate("osLL", measurement.getOxygenSaturationLevel().getLowerLimit());
         jsonObject.accumulate("bloodLossRate", measurement.getBloodLossRate());
         jsonObject.accumulate("abnormalVitalSigns", entry.getAbnormalVitalSigns());
+        jsonObject.accumulate("patientId", measurement.getPatientData().getId());
+        jsonObject.accumulate("surgeryId", measurement.getSurgery().getId());
         return new MqttMessage(jsonObject.toString().getBytes());
     }
 }

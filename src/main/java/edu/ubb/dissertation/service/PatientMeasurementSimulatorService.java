@@ -5,6 +5,7 @@ import edu.ubb.dissertation.mqtt.MqttClientConnector;
 import edu.ubb.dissertation.repository.AbnormalVitalSignRepository;
 import edu.ubb.dissertation.repository.PatientDataRepository;
 import edu.ubb.dissertation.repository.PatientMeasurementRepository;
+import edu.ubb.dissertation.repository.SurgeryRepository;
 import io.vavr.control.Try;
 import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
@@ -36,6 +38,8 @@ public class PatientMeasurementSimulatorService {
     private AbnormalVitalSignRepository abnormalVitalSignRepository;
     @Autowired
     private PatientDataRepository patientDataRepository;
+    @Autowired
+    private SurgeryRepository surgeryRepository;
     private MqttClientConnector mqttClientConnector;
 
     public PatientMeasurementSimulatorService() {
@@ -49,10 +53,11 @@ public class PatientMeasurementSimulatorService {
 
     private void generateMeasurements(final Integer measurementsNumber) {
         final PatientData patientData = retrieveOrCreatePatient();
+        final Surgery surgery = createSurgery();
 
         mqttClientConnector.connect();
         IntStream.range(0, measurementsNumber)
-                .forEach(i -> generateEntry(patientData));
+                .forEach(i -> generateEntry(patientData, surgery));
         mqttClientConnector.disconnect();
     }
 
@@ -66,8 +71,14 @@ public class PatientMeasurementSimulatorService {
                 : patientDataRepository.findAll().iterator().next();
     }
 
-    private void generateEntry(final PatientData patientData) {
-        final PatientMeasurement measurement = patientMeasurementRepository.save(createPatientMeasurement(patientData));
+    private Surgery createSurgery() {
+        final Surgery surgery = new Surgery();
+        surgery.setId(UUID.randomUUID().toString());
+        return surgeryRepository.save(surgery);
+    }
+
+    private void generateEntry(final PatientData patientData, final Surgery surgery) {
+        final PatientMeasurement measurement = patientMeasurementRepository.save(createPatientMeasurement(patientData, surgery));
         final AbnormalVitalSignsEntry entry = abnormalVitalSignRepository.save(createAbnormalVitalSignsEntry(measurement));
         mqttClientConnector.publish(createMqttMessage(measurement, entry));
     }
@@ -77,19 +88,21 @@ public class PatientMeasurementSimulatorService {
      * is done in order to ensure the correlation with the other data used in the pipeline and as such make sure that
      * the processing/analytics performed on the data is relevant.
      */
-    private PatientMeasurement createPatientMeasurement(final PatientData patientData) {
+    private PatientMeasurement createPatientMeasurement(final PatientData patientData, final Surgery surgery) {
         LocalDateTime timestamp = LocalDateTime.now(UTC);
         while (timestamp.getSecond() % 10 != 0) {
             timestamp = LocalDateTime.now(UTC);
         }
         // added in order to avoid having data generated with the same timestamp
         Try.run(() -> Thread.sleep(1000));
-        return createPatientMeasurement(patientData, timestamp);
+        return createPatientMeasurement(patientData, surgery, timestamp);
     }
 
-    private PatientMeasurement createPatientMeasurement(final PatientData patientData, final LocalDateTime timestamp) {
+    private PatientMeasurement createPatientMeasurement(final PatientData patientData, final Surgery surgery,
+                                                        final LocalDateTime timestamp) {
         final PatientMeasurement patientMeasurement = new PatientMeasurement();
         patientMeasurement.setPatientData(patientData);
+        patientMeasurement.setSurgery(surgery);
         patientMeasurement.setTimestamp(timestamp);
         patientMeasurement.setSystolicBloodPressure(
                 createMeasurement(SYSTOLIC_BLOOD_PRESSURE_UPPER_LIMIT, SYSTOLIC_BLOOD_PRESSURE_LOWER_LIMIT));
