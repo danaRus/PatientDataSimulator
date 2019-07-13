@@ -89,9 +89,9 @@ public class PatientMeasurementSimulatorService {
      * the processing/analytics performed on the data is relevant.
      */
     private PatientMeasurement createPatientMeasurement(final PatientData patientData, final Surgery surgery) {
-        LocalDateTime timestamp = LocalDateTime.now(UTC);
+        LocalDateTime timestamp = LocalDateTime.now(UTC).withNano(0);
         while (timestamp.getSecond() % 10 != 0) {
-            timestamp = LocalDateTime.now(UTC);
+            timestamp = LocalDateTime.now(UTC).withNano(0);
         }
         // added in order to avoid having data generated with the same timestamp
         Try.run(() -> Thread.sleep(1000));
