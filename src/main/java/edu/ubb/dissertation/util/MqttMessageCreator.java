@@ -12,7 +12,7 @@ public final class MqttMessageCreator {
 
     public static MqttMessage createMqttMessage(final PatientMeasurement measurement, final AbnormalVitalSignsEntry entry) {
         final MqttMessage message = new MqttMessage(createJson(measurement, entry).toString().getBytes());
-        message.setQos(2);
+//        message.setQos(2);
         return message;
     }
 
