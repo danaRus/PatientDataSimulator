@@ -22,8 +22,8 @@ public class MqttClientConnector {
     private static final Logger LOGGER = LoggerFactory.getLogger(MqttClientConnector.class);
 
     private static final String CLIENT_ID = "SIMULATOR_CLIENT_CONNECTION_ID";
-    private static final String TOPIC_NAME = "dissertation/patient_data1";
-    private static final String SERVER_ADDRESS = "tcp://iot.eclipse.org:1883";
+    private static final String TOPIC_NAME = "dissertation/patient_data_5";
+    private static final String SERVER_ADDRESS = "tcp://mqtt.eclipse.org:1883";
 
     private MqttClient client;
 
