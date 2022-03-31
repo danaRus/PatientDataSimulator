@@ -10,7 +10,7 @@
 
     <properties>
         <spring.data.version>2.1.8.RELEASE</spring.data.version>
-        <spring.boot.version>2.1.5.RELEASE</spring.boot.version>
+        <spring.boot.version>2.5.12</spring.boot.version>
         <persistence-api.version>1.0.2</persistence-api.version>
         <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <mysql-connector-java.version>5.1.6</mysql-connector-java.version>
