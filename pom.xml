@@ -18,7 +18,7 @@
         <io.vavr.version>0.9.2</io.vavr.version>
         <org.eclipse.paho.mqtt.version>1.2.1</org.eclipse.paho.mqtt.version>
         <net.jodah.failsafe.version>2.0.1</net.jodah.failsafe.version>
-        <org.json.version>20180813</org.json.version>
+        <org.json.version>20230227</org.json.version>
     </properties>
 
     <parent>
